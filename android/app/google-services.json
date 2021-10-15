@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "406650431609",
+    "project_id": "delivery-app-4584e",
+    "storage_bucket": "delivery-app-4584e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:406650431609:android:74ed61d26f06a676658ca8",
+        "android_client_info": {
+          "package_name": "com.erikma.delivery_project"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "406650431609-t7eegedeotjgkfp5qr8ld86rvmcfldc3.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.erikma.delivery_project",
+            "certificate_hash": "7eef084e888eb98c8aeb7a510348e30b3d8f1bb1"
+          }
+        },
+        {
+          "client_id": "406650431609-18r28on7ci5ijc3ka7jm7qnmurg451r3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBuYIkzRBWexN1OWkjueqockKXWa4OQp4I"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "406650431609-18r28on7ci5ijc3ka7jm7qnmurg451r3.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
