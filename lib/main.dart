@@ -2,9 +2,12 @@ import 'package:delivery_project/src/pages/client/address/create/client_address_
 import 'package:delivery_project/src/pages/client/address/list/client_address_list_page.dart';
 import 'package:delivery_project/src/pages/client/address/map/client_address_map_page.dart';
 import 'package:delivery_project/src/pages/client/orders/create/client_orders_create_page.dart';
+import 'package:delivery_project/src/pages/client/orders/list/client_orders_list_page.dart';
+import 'package:delivery_project/src/pages/client/orders/map/client_orders_map_page.dart';
 import 'package:delivery_project/src/pages/client/products/list/client_products_list_page.dart';
 import 'package:delivery_project/src/pages/client/update/client_update_page.dart';
 import 'package:delivery_project/src/pages/delivery/orders/list/delivery_orders_list_page.dart';
+import 'package:delivery_project/src/pages/delivery/orders/map/delivery_orders_map_page.dart';
 import 'package:delivery_project/src/pages/login/login_page.dart';
 import 'package:delivery_project/src/pages/register/register_page.dart';
 import 'package:delivery_project/src/pages/restaurant/categories/create/restaurant_categories_create_page.dart';
@@ -44,8 +47,11 @@ class _MyAppState extends State<MyApp> {
         'client/address/list' : (BuildContext contexto) => ClientAddressListPage(),
         'client/address/create' : (BuildContext contexto) => ClientAddressCreatePage(),
         'client/address/map' : (BuildContext contexto) => ClientAddressMapPage(),
+        'client/orders/list' : (BuildContext contexto) => ClientOrdersListPage(),
+        'client/orders/map' : (BuildContext contexto) => ClientOrdersMapPage(),
 
         'delivery/orders/list' : (BuildContext contexto) => DeliveryOrdersListPage(),
+        'delivery/orders/map' : (BuildContext contexto) => DeliveryOrdersMapPage(),
 
         'restaurant/orders/list' : (BuildContext contexto) => RestaurantOrdersListPage(),
         'restaurant/categories/create' : (BuildContext contexto) => RestaurantCategoriesCreatePage(),

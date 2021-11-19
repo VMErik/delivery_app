@@ -33,6 +33,10 @@ class ClientProductsListController {
   }
 
 
+  void goToOrdersList(){
+    Navigator.pushNamed(context, 'client/orders/list');
+  }
+
   Future<List<Product>> getProducts(String idCategory) async{
     return await _productsProvider.getByCategory(idCategory);
   }

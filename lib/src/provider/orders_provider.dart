@@ -20,6 +20,82 @@ class OrdersProvider{
     this.sessionUser = sessionUser;
   }
 
+
+  Future<List<Order>> getByStaus(String status) async{
+    try{
+      print(sessionUser.sessionToken);
+      Uri uri = Uri.http(_url , '$_api/findByStatus/$status');
+      // Indicamos que lo que estamos viendo son json
+      Map<String,String> headers = {
+        'Content-type' : 'application/json',
+        'Authorization' :  sessionUser.sessionToken
+      };
+      final response = await http.get(uri,headers: headers);
+      if (response.statusCode == 401){
+        Fluttertoast.showToast(msg: 'Sesion Expirada');
+        new SharedPref().logout(context , sessionUser.id);
+      }
+      // COnvertimos en el formato que lo necesitamos
+      // Convertimos nuestro json a una lista de categorias
+      final data = json.decode(response.body);
+      Order order = Order.fromJsonList(data);
+      return order.toList;
+    }catch(e){
+      print('Error $e');
+      return [];
+    }
+  }
+
+  Future<List<Order>> getByDeliveryAndStatus(String idDelivery, String status) async{
+    try{
+      print(sessionUser.sessionToken);
+      Uri uri = Uri.http(_url , '$_api/findByDeliveryAndStatus/$idDelivery/$status');
+      // Indicamos que lo que estamos viendo son json
+      Map<String,String> headers = {
+        'Content-type' : 'application/json',
+        'Authorization' :  sessionUser.sessionToken
+      };
+      final response = await http.get(uri,headers: headers);
+      if (response.statusCode == 401){
+        Fluttertoast.showToast(msg: 'Sesion Expirada');
+        new SharedPref().logout(context , sessionUser.id);
+      }
+      // COnvertimos en el formato que lo necesitamos
+      // Convertimos nuestro json a una lista de categorias
+      final data = json.decode(response.body);
+      Order order = Order.fromJsonList(data);
+      return order.toList;
+    }catch(e){
+      print('Error $e');
+      return [];
+    }
+  }
+
+  Future<List<Order>> getByClientAndStatus(String idClient, String status) async{
+    try{
+      print(sessionUser.sessionToken);
+      Uri uri = Uri.http(_url , '$_api/findByClientAndStatus/$idClient/$status');
+      // Indicamos que lo que estamos viendo son json
+      Map<String,String> headers = {
+        'Content-type' : 'application/json',
+        'Authorization' :  sessionUser.sessionToken
+      };
+      final response = await http.get(uri,headers: headers);
+      if (response.statusCode == 401){
+        Fluttertoast.showToast(msg: 'Sesion Expirada');
+        new SharedPref().logout(context , sessionUser.id);
+      }
+      // COnvertimos en el formato que lo necesitamos
+      // Convertimos nuestro json a una lista de categorias
+      final data = json.decode(response.body);
+      Order order = Order.fromJsonList(data);
+      return order.toList;
+    }catch(e){
+      print('Error $e');
+      return [];
+    }
+  }
+
   Future<ResponseApi> create(Order order) async{
     try{
       Uri uri = Uri.http(_url , '$_api/create');
@@ -50,6 +126,98 @@ class OrdersProvider{
       return responseApi;
     }
   }
+
+
+  Future<ResponseApi> updateToDispatched(Order order) async{
+    try{
+      Uri uri = Uri.http(_url , '$_api/updateToDispatched');
+      print(uri);
+      String bodyParams = json.encode(order);
+      // Indicamos que lo que estamos viendo son json
+      Map<String,String> headers = {
+        'Content-type' : 'application/json',
+        'Authorization' :  sessionUser.sessionToken
+      };
+
+      final response = await http.put(uri,headers: headers, body: bodyParams);
+      if (response.statusCode == 401){
+        Fluttertoast.showToast(msg: 'Sesion Expirada');
+        SharedPref().logout(context, sessionUser.id);
+      }
+      // Almacenamos la respuesta de nuestra API
+      final data = json.decode(response.body);
+      // Lo convertimos a nuestro response Api
+      ResponseApi responseApi = ResponseApi.fromJson(data);
+      return responseApi;
+    }catch(e){
+      print('Error $e');
+      ResponseApi responseApi =  new ResponseApi
+        (message: 'Error en el front', error: e.toString(), success: false);
+      return responseApi;
+    }
+  }
+
+  Future<ResponseApi> updateToOnTheWay(Order order) async{
+    try{
+      Uri uri = Uri.http(_url , '$_api/updateToOnTheWay');
+      print(uri);
+
+      String bodyParams = json.encode(order);
+      // Indicamos que lo que estamos viendo son json
+      Map<String,String> headers = {
+        'Content-type' : 'application/json',
+        'Authorization' :  sessionUser.sessionToken
+      };
+
+      final response = await http.put(uri,headers: headers, body: bodyParams);
+      if (response.statusCode == 401){
+        Fluttertoast.showToast(msg: 'Sesion Expirada');
+        SharedPref().logout(context, sessionUser.id);
+      }
+      // Almacenamos la respuesta de nuestra API
+      final data = json.decode(response.body);
+      // Lo convertimos a nuestro response Api
+      ResponseApi responseApi = ResponseApi.fromJson(data);
+      return responseApi;
+    }catch(e){
+      print('Error $e');
+      ResponseApi responseApi =  new ResponseApi
+        (message: 'Error en el front', error: e.toString(), success: false);
+      return responseApi;
+    }
+  }
+
+
+  Future<ResponseApi> updateToDelivered(Order order) async{
+    try{
+      Uri uri = Uri.http(_url , '$_api/updateToDelivered');
+      print(uri);
+
+      String bodyParams = json.encode(order);
+      // Indicamos que lo que estamos viendo son json
+      Map<String,String> headers = {
+        'Content-type' : 'application/json',
+        'Authorization' :  sessionUser.sessionToken
+      };
+
+      final response = await http.put(uri,headers: headers, body: bodyParams);
+      if (response.statusCode == 401){
+        Fluttertoast.showToast(msg: 'Sesion Expirada');
+        SharedPref().logout(context, sessionUser.id);
+      }
+      // Almacenamos la respuesta de nuestra API
+      final data = json.decode(response.body);
+      // Lo convertimos a nuestro response Api
+      ResponseApi responseApi = ResponseApi.fromJson(data);
+      return responseApi;
+    }catch(e){
+      print('Error $e');
+      ResponseApi responseApi =  new ResponseApi
+        (message: 'Error en el front', error: e.toString(), success: false);
+      return responseApi;
+    }
+  }
+
 
 
 }

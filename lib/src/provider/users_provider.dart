@@ -157,11 +157,11 @@ class UsersProvider{
     }
   }
 
-
   Future<User> getById(String id) async{
     try{
       Uri url = Uri.http(_url, '$_api/findById/$id');
       Map<String,String> headers = {
+
         'Content-type' : 'application/json',
         'Authorization' : sessionUser.sessionToken
       };
@@ -183,6 +183,31 @@ class UsersProvider{
     }
 
   }
+
+
+  Future<List<User>> getDeliveryMen() async{
+    try{
+      Uri url = Uri.http(_url, '$_api/findDeliveryMen');
+      Map<String,String> headers = {
+        'Content-type' : 'application/json',
+        'Authorization' : sessionUser.sessionToken
+      };
+
+      final resp = await http.get(url,headers: headers);
+      if (resp.statusCode == 401){//Unauthorzed
+        Fluttertoast.showToast(msg: 'Tu sesión expiro');
+        new SharedPref().logout(context, sessionUser.id);
+      }
+      final data = json.decode(resp.body);
+      User user = User.fromJsonList(data);
+      return user.toList;
+    }catch(e){
+      print('Error $e');
+      return null;
+    }
+
+  }
+
 
 
 }

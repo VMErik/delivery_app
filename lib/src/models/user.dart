@@ -18,6 +18,7 @@ class User {
   String password;
   String sessionToken;
   List<Rol> roles = [];
+  List<User> toList =  [];
 
   User({
      this.id,
@@ -30,6 +31,15 @@ class User {
      this.sessionToken,
     this.roles
   });
+
+
+  User.fromJsonList(List<dynamic> jsonList){
+    if (jsonList == null) return;
+    jsonList.forEach((item  ) {
+      User user = User.fromJson(item);
+      toList.add(user);
+    });
+  }
 
   factory User.fromJson(Map<String, dynamic> json) => User(
     id: json["id"] is int  ? json['id'].toString() : json['id'] ,

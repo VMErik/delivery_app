@@ -1,12 +1,14 @@
 import 'package:delivery_project/src/models/order.dart';
 import 'package:delivery_project/src/models/user.dart';
+import 'package:delivery_project/src/pages/client/orders/detail/client_orders_detail_page.dart';
+import 'package:delivery_project/src/pages/delivery/orders/detail/delivery_orders_detail_page.dart';
 import 'package:delivery_project/src/pages/restaurant/orders/detail/restaurant_orders_detail_page.dart';
 import 'package:delivery_project/src/provider/orders_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:delivery_project/src/utils/shared_pref.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 
-class RestaurantOrdersListController {
+class ClientOrdersListController {
   BuildContext context;
 
   SharedPref _sharedPref = new SharedPref();
@@ -15,7 +17,7 @@ class RestaurantOrdersListController {
   User user ;
   Function refresh;
 
-  List<String> status = ['PAGADO' ,'DESPACHADO' , 'ENVIADO' , 'EN CAMINO' ,  'ENTREGADO'];
+  List<String> status = ['PAGADO','DESPACHADO'  , 'EN CAMINO' ,  'ENTREGADO'];
   OrdersProvider _ordersProvider = new OrdersProvider();
   bool isUpdated;
 
@@ -24,22 +26,20 @@ class RestaurantOrdersListController {
     this.context = context;
     this.refresh = refresh;
     user = User.fromJson(await _sharedPref.read('user') );
-
     _ordersProvider.init(context, user);
 
     refresh();
   }
 
   Future<List<Order>> getOrder(String status) async{
-    return await _ordersProvider.getByStaus(status);
-
+    return await _ordersProvider.getByClientAndStatus( user.id ,status);
   }
 
 
   void openBottonSheet(Order order) async {
     isUpdated = await  showMaterialModalBottomSheet(
         context: context,
-        builder: (context) => RestaurantOrdersDetailPage(order : order)
+        builder: (context) => ClientOrdersDetailPage(order : order)
     );
     if (isUpdated){
       refresh();

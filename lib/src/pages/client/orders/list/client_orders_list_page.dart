@@ -7,18 +7,18 @@ import 'package:delivery_project/src/widgets/no_data_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 
-import 'delivery_orders_list_controller.dart';
+import 'client_orders_list_controller.dart';
 
-class DeliveryOrdersListPage extends StatefulWidget {
-  const DeliveryOrdersListPage({Key key}) : super(key: key);
+class ClientOrdersListPage extends StatefulWidget {
+  const ClientOrdersListPage({Key key}) : super(key: key);
 
   @override
-  _DeliveryOrdersListPageState createState() => _DeliveryOrdersListPageState();
+  _ClientOrdersListPageState createState() => _ClientOrdersListPageState();
 }
 
-class _DeliveryOrdersListPageState extends State<DeliveryOrdersListPage> {
+class _ClientOrdersListPageState extends State<ClientOrdersListPage> {
 
-  DeliveryOrdersListController _con = new DeliveryOrdersListController();
+  ClientOrdersListController _con = new ClientOrdersListController();
 
   @override
   void initState() {
@@ -39,17 +39,12 @@ class _DeliveryOrdersListPageState extends State<DeliveryOrdersListPage> {
             // Le da un tamaño al appbar
             preferredSize: Size.fromHeight(100),
             child: AppBar(
+              title: Text('Mis pedidos'),
               automaticallyImplyLeading: false,
-              backgroundColor: Colors.white,
-              // Aqui pensonalizamos
-              flexibleSpace: Column(
-                children: [
-                  _menuDrawer(),
-                ],
-              ),
+              backgroundColor: MyColors.primaryColor,
               bottom: TabBar(
                 indicatorColor: MyColors.primaryColor,
-                labelColor: Colors.black,
+                labelColor: Colors.white,
                 unselectedLabelColor: Colors.grey[400],
                 isScrollable: true,
                 tabs: List<Widget>.generate(_con.status.length, (index){
@@ -61,7 +56,6 @@ class _DeliveryOrdersListPageState extends State<DeliveryOrdersListPage> {
               ),
             ),
           ),
-          drawer: _drawer(),
           body: TabBarView(
             children:_con.status.map((String status){
               return FutureBuilder(
@@ -147,7 +141,7 @@ class _DeliveryOrdersListPageState extends State<DeliveryOrdersListPage> {
                             width: double.infinity,
                             margin: EdgeInsets.symmetric(vertical: 5),
                             child: Text(
-                              'Cliente : ${order.client.name ?? ''}  ${order.client.lastname ?? ''} ',
+                              'Repartidor : ${order.delivery?.name ?? '--NO ASIGNADO--'}  ${order.delivery?.lastname ?? ''} ',
                               style: TextStyle(
                                   fontSize: 13
                               ),
@@ -172,103 +166,6 @@ class _DeliveryOrdersListPageState extends State<DeliveryOrdersListPage> {
                   ]
               )
           )
-      ),
-    );
-
-  }
-
-
-
-  // Este es el boton para actiar el draweer
-  Widget _menuDrawer(){
-    return GestureDetector(
-      onTap: (){
-        _con.openDrawer();
-      },
-      child: Container(
-        margin: EdgeInsets.only(left: 20 , top: 80),
-        alignment: Alignment.centerLeft,
-        child: Image.asset('assets/img/menu.png' , width: 20, height: 20, color: Colors.black,),
-      ),
-    );
-  }
-
-
-
-  Widget _drawer(){
-    return Drawer(
-      // Se posicionaran uno debajo del otro
-      child: ListView(
-        padding: EdgeInsets.zero,
-        children: [
-          DrawerHeader(
-              decoration: BoxDecoration(
-                  color: MyColors.primaryColor
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    '${ _con.user?.name ?? ''} ${ _con.user?.lastname ?? ''} ',
-                    style: TextStyle(
-                        fontSize: 18,
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold
-                    ),
-                    // Solo puede tener una linea el texto
-                    maxLines: 1,
-                  ),
-                  // Aqui va el correo electronico
-                  Text(
-                    '${ _con.user?.email ?? '' }',
-                    style: TextStyle(
-                        fontSize: 13,
-                        color: Colors.grey[200],
-                        fontWeight: FontWeight.bold,
-                        fontStyle: FontStyle.italic
-                    ),
-                    // Solo puede tener una linea el texto
-                    maxLines: 1,
-                  ),
-                  Text(
-                    '${_con.user?.phone ??  ''}',
-                    style: TextStyle(
-                        fontSize: 13,
-                        color: Colors.grey[200],
-                        fontWeight: FontWeight.bold,
-                        fontStyle: FontStyle.italic
-                    ),
-                    // Solo puede tener una linea el texto
-                    maxLines: 1,
-                  ) ,
-                  Container(
-                    height: 60,
-                    margin: EdgeInsets.only(top: 10),
-                    child: FadeInImage(
-                      image: _con.user?.image != null
-                          ? NetworkImage(_con.user?.image)
-                          : AssetImage('assets/img/no-image.png'),
-                      fit: BoxFit.contain,
-                      fadeInDuration: Duration(milliseconds: 50),
-                      placeholder:AssetImage('assets/img/no-image.png') ,
-                    ),
-                  ) ,
-                ],
-              )
-          ) ,
-          _con.user != null ?
-          _con.user.roles.length > 1 ?
-          ListTile(
-            onTap: _con.goToRoles,
-            title: Text('Cambiar Rol'),
-            trailing: Icon(Icons.person_outline),
-          ) : Container() : Container(),
-          ListTile(
-            title: Text('Cerrar Sesión'),
-            trailing: Icon(Icons.power_settings_new_outlined),
-            onTap: _con.logout,
-          ),
-        ],
       ),
     );
   }
