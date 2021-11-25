@@ -18,6 +18,8 @@ import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart' as location;
 import 'package:url_launcher/url_launcher.dart';
+import 'package:socket_io_client/socket_io_client.dart' as IO;
+
 
 class ClientOrdersMapController{
 
@@ -26,7 +28,7 @@ class ClientOrdersMapController{
 
   //Almacenar la variables
   Position _position;
-  StreamSubscription _positionStream;
+
 
   //
   String addressName;
@@ -56,6 +58,7 @@ class ClientOrdersMapController{
   SharedPref _sharedPref = new SharedPref();
 
   double _distanceBetween;
+  IO.Socket socket;
 
   Future init(BuildContext context, Function refresh)async{
     this.context = context;
@@ -65,6 +68,21 @@ class ClientOrdersMapController{
     order = Order.fromJson(ModalRoute.of(context).settings.arguments as Map<String, dynamic>);
     deliveryMarker =  await createMarketFromAsset('assets/img/delivery2.png');
     homeMarker = await  createMarketFromAsset('assets/img/home.png');
+
+    // Inicializamos el socket
+    socket = IO.io('http://${Enviroment.API_DELIVERY}/orders/delivery' ,
+        <String, dynamic>{
+          'transports': ['websocket'],
+          'autoConnect' : false
+        });
+    socket.connect();
+    // Ponemos nuestro nombre del evento
+    socket.on('position/${order.id}', (data){
+      // Comprobamos lo que se esta moviendo
+      print(data);
+      addMarker('delivery', data['lat'], data['lng'], 'Tu repartidor', '', deliveryMarker);
+
+    });
 
     user = User.fromJson(await _sharedPref.read('user'));
     _ordersProvider.init(context, user);
@@ -109,21 +127,6 @@ class ClientOrdersMapController{
     }
   }
 
-  void updateToDelivered() async{
-    print('Distancia final  ${ _distanceBetween }');
-    // Si es menor a 200 metros , permite
-    if (_distanceBetween <= 200){
-      ResponseApi responseApi = await _ordersProvider.updateToDelivered(order);
-      if(responseApi.success){
-        Fluttertoast.showToast(msg: responseApi.message , toastLength: Toast.LENGTH_LONG);
-        Navigator.pushNamedAndRemoveUntil(context, 'delivery/orders/list', (route) => false);
-      }
-    }else{
-      //Manda mensaje que se acerque mas a la posciion de entrega
-      MySnackbar.show(context, 'Debe estar mas cerca para poder marcar como entregada la orden');
-    }
-  }
-
 
   Future<void> setPolilines(LatLng from, LatLng to) async{
     PointLatLng pointFrom  = PointLatLng(from.latitude, from.longitude);
@@ -142,6 +145,7 @@ class ClientOrdersMapController{
     );
 
     polylines.add(polyLine);
+
     refresh();
 
   }
@@ -231,7 +235,8 @@ class ClientOrdersMapController{
 
 
   void dispose(){
-    _positionStream?.cancel();
+
+    socket?.disconnect();
   }
 
 
@@ -239,25 +244,16 @@ class ClientOrdersMapController{
     try{
       // Obtiene ubicacion y genera los permisos
       await _determinePosition();
-      _position = await Geolocator.getLastKnownPosition(); // Obtenemos latitdu y longitud de  posicion
-      animateCamaraToPosition(_position.latitude, _position.longitude);
-      addMarker('delivery', _position.latitude, _position.longitude, 'Tu posición', '', deliveryMarker);
+
+      animateCamaraToPosition(order.lat, order.lng);
+      addMarker('delivery', order.lat, order.lng, 'Tu repartidor', '', deliveryMarker);
+
+
       addMarker('home', order.address.lat, order.address.lng, 'Lugar de entrega', '', homeMarker);
 
-      LatLng from  = LatLng(_position.latitude, _position.longitude);
+      LatLng from  = LatLng(order.lat, order.lng);
       LatLng to  = LatLng(order.address.lat, order.address.lng);
       setPolilines( from , to);
-
-
-      _positionStream = Geolocator.getPositionStream(
-          desiredAccuracy : LocationAccuracy.best ,
-         distanceFilter :  1
-      ).listen((Position position){
-        _position  = position;
-        addMarker('delivery', _position.latitude, _position.longitude, 'Tu posición', '', deliveryMarker);
-      });
-      animateCamaraToPosition(_position.latitude, _position.longitude);
-      isCloseToDeliveryPosition();
 
       refresh();
     }catch(e){

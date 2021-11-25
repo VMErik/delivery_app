@@ -6,6 +6,7 @@ import 'package:delivery_project/src/models/order.dart';
 import 'package:delivery_project/src/models/response_api.dart';
 import 'package:delivery_project/src/models/user.dart';
 import 'package:delivery_project/src/provider/orders_provider.dart';
+import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:delivery_project/src/utils/my_colors.dart';
 import 'package:delivery_project/src/utils/my_snackbar.dart';
 import 'package:delivery_project/src/utils/shared_pref.dart';
@@ -56,6 +57,7 @@ class DeliveryOrdersMapController{
   SharedPref _sharedPref = new SharedPref();
 
   double _distanceBetween;
+  IO.Socket socket;
 
   Future init(BuildContext context, Function refresh)async{
     this.context = context;
@@ -66,9 +68,31 @@ class DeliveryOrdersMapController{
     deliveryMarker =  await createMarketFromAsset('assets/img/delivery2.png');
     homeMarker = await  createMarketFromAsset('assets/img/home.png');
 
+    // Inicializamos el socket
+    socket = IO.io('http://${Enviroment.API_DELIVERY}/orders/delivery' ,
+                      <String, dynamic>{
+                        'transports': ['websocket'],
+                        'autoConnect' : false
+                      });
+    socket.connect();
+    
     user = User.fromJson(await _sharedPref.read('user'));
     _ordersProvider.init(context, user);
     checkGPS();
+  }
+
+  void saveLocation() async{
+    order.lat  = _position.latitude;
+    order.lng = _position.longitude;
+    await  _ordersProvider.updateLatLng(order);
+  }
+  
+  void emitPosition(){
+    socket.emit('position', {
+      'id_order' : order.id ,
+      'lat' :  _position.latitude ,
+      'lng' : _position.longitude
+    });
   }
 
   void isCloseToDeliveryPosition(){
@@ -232,6 +256,8 @@ class DeliveryOrdersMapController{
 
   void dispose(){
     _positionStream?.cancel();
+    //Nos desconectamos del socket, para ya no seguir emitiendo
+    socket?.disconnect();
   }
 
 
@@ -240,6 +266,10 @@ class DeliveryOrdersMapController{
       // Obtiene ubicacion y genera los permisos
       await _determinePosition();
       _position = await Geolocator.getLastKnownPosition(); // Obtenemos latitdu y longitud de  posicion
+
+      // Guardamos nuestra posicion en la base de datos, cuando el delivery entra por primera vez en el mapa
+      saveLocation();
+
       animateCamaraToPosition(_position.latitude, _position.longitude);
       addMarker('delivery', _position.latitude, _position.longitude, 'Tu posición', '', deliveryMarker);
       addMarker('home', order.address.lat, order.address.lng, 'Lugar de entrega', '', homeMarker);
@@ -254,6 +284,10 @@ class DeliveryOrdersMapController{
          distanceFilter :  1
       ).listen((Position position){
         _position  = position;
+
+        // Emitimos nuestra posicion actual al socket
+        emitPosition();
+
         addMarker('delivery', _position.latitude, _position.longitude, 'Tu posición', '', deliveryMarker);
       });
       animateCamaraToPosition(_position.latitude, _position.longitude);

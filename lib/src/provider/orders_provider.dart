@@ -220,4 +220,36 @@ class OrdersProvider{
 
 
 
+  Future<ResponseApi> updateLatLng(Order order) async{
+    try{
+      Uri uri = Uri.http(_url , '$_api/updateLatLng');
+      print(uri);
+
+      String bodyParams = json.encode(order);
+      // Indicamos que lo que estamos viendo son json
+      Map<String,String> headers = {
+        'Content-type' : 'application/json',
+        'Authorization' :  sessionUser.sessionToken
+      };
+
+      final response = await http.put(uri,headers: headers, body: bodyParams);
+      if (response.statusCode == 401){
+        Fluttertoast.showToast(msg: 'Sesion Expirada');
+        SharedPref().logout(context, sessionUser.id);
+      }
+      // Almacenamos la respuesta de nuestra API
+      final data = json.decode(response.body);
+      // Lo convertimos a nuestro response Api
+      ResponseApi responseApi = ResponseApi.fromJson(data);
+      return responseApi;
+    }catch(e){
+      print('Error $e');
+      ResponseApi responseApi =  new ResponseApi
+        (message: 'Error en el front', error: e.toString(), success: false);
+      return responseApi;
+    }
+  }
+
+
+
 }
