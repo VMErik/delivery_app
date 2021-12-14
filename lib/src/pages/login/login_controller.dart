@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:delivery_project/src/models/response_api.dart';
 import 'package:delivery_project/src/models/user.dart';
+import 'package:delivery_project/src/provider/push_notifications_provider.dart';
 import 'package:delivery_project/src/provider/users_provider.dart';
 import 'package:delivery_project/src/utils/my_snackbar.dart';
 import 'package:delivery_project/src/utils/shared_pref.dart';
@@ -17,6 +18,9 @@ class LoginController {
   UsersProvider usersProvider = new UsersProvider();
   SharedPref _sharedPref = new SharedPref();
 
+
+  PushNotificationsProvider pushNotificationsProvider = new PushNotificationsProvider();
+
   Future init(BuildContext context) async{
     this.context = context;
     await this.usersProvider.init(context);
@@ -24,6 +28,10 @@ class LoginController {
     // Hacemos la validacion para ver si ya tenemos un login
     User user = User.fromJson(await _sharedPref.read('user') ?? {});
     if (user.sessionToken != null){
+
+      await pushNotificationsProvider.saveToken(user, context);
+
+
       if(user.roles.length > 1){
         Navigator.pushNamedAndRemoveUntil(context, 'roles', (route) => false) ;
       }else{
@@ -49,6 +57,9 @@ class LoginController {
 
       User user = User.fromJson(responseApi.data);
       _sharedPref.save('user', user.toJson());
+
+      await pushNotificationsProvider.saveToken(user , context);
+
 
       if(user.roles.length > 1){
         Navigator.pushNamedAndRemoveUntil(context, 'roles', (route) => false) ;

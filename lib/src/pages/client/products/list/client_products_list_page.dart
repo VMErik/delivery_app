@@ -39,7 +39,7 @@ class _ClientProductsListPageState extends State<ClientProductsListPage> {
         key: _con.key,
         appBar: PreferredSize(
           // Le da un tamaño al appbar
-          preferredSize: Size.fromHeight(170),
+          preferredSize: Size.fromHeight(120),
           child: AppBar(
             automaticallyImplyLeading: false,
             backgroundColor: Colors.white,
@@ -49,10 +49,10 @@ class _ClientProductsListPageState extends State<ClientProductsListPage> {
             ],
             flexibleSpace: Column(
               children: [
-                SizedBox( height: 80),
+                SizedBox( height: 45),
                 _menuDrawer(),
                 SizedBox( height: 15),
-                _textFieldSearch()
+                _textFieldSearch() ,
               ],
             ),
             bottom: TabBar(
@@ -73,7 +73,7 @@ class _ClientProductsListPageState extends State<ClientProductsListPage> {
         body: TabBarView(
           children:_con.categories.map((Category category){
               return FutureBuilder(
-                future: _con.getProducts(category.id),
+                future: _con.getProducts(category.id , _con.productName),
                 builder: (context, AsyncSnapshot<List<Product>> snapshot){
 
                   if(snapshot.hasData){
@@ -186,7 +186,7 @@ class _ClientProductsListPageState extends State<ClientProductsListPage> {
       child: Stack(
         children: [
           Container(
-            margin: EdgeInsets.only(right: 15, top: 13),
+            margin: EdgeInsets.only(right: 15),
             child: Icon(
               Icons.shopping_bag_outlined,
               color: MyColors.primaryColor,
@@ -211,8 +211,9 @@ class _ClientProductsListPageState extends State<ClientProductsListPage> {
 
   Widget _textFieldSearch(){
     return  Container(
-      margin: EdgeInsets.symmetric(horizontal: 20),
+      margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
       child: TextField(
+        onChanged: _con.onChangeText,
         decoration: InputDecoration(
           hintText: 'Buscar',
           suffixIcon: Icon(Icons.search, color: MyColors.primaryColor,),

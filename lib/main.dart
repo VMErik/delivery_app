@@ -4,6 +4,8 @@ import 'package:delivery_project/src/pages/client/address/map/client_address_map
 import 'package:delivery_project/src/pages/client/orders/create/client_orders_create_page.dart';
 import 'package:delivery_project/src/pages/client/orders/list/client_orders_list_page.dart';
 import 'package:delivery_project/src/pages/client/orders/map/client_orders_map_page.dart';
+import 'package:delivery_project/src/pages/client/payments/create/client_payments_create_page.dart';
+import 'package:delivery_project/src/pages/client/payments/installments/client_payments_create_page.dart';
 import 'package:delivery_project/src/pages/client/products/list/client_products_list_page.dart';
 import 'package:delivery_project/src/pages/client/update/client_update_page.dart';
 import 'package:delivery_project/src/pages/delivery/orders/list/delivery_orders_list_page.dart';
@@ -14,10 +16,30 @@ import 'package:delivery_project/src/pages/restaurant/categories/create/restaura
 import 'package:delivery_project/src/pages/restaurant/orders/list/restaurant_orders_list_page.dart';
 import 'package:delivery_project/src/pages/restaurant/products/create/restaurant_products_create_page.dart';
 import 'package:delivery_project/src/pages/roles/roles_page.dart';
+import 'package:delivery_project/src/provider/push_notifications_provider.dart';
 import 'package:delivery_project/src/utils/my_colors.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 
-void main() {
+
+PushNotificationsProvider pushNotificationsProvider = new PushNotificationsProvider();
+
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  // If you're going to use other Firebase services in the background, such as Firestore,
+  // make sure you call `initializeApp` before using other Firebase services.
+  await Firebase.initializeApp();
+  print('Handling a background message ${message.messageId}');
+}
+
+
+
+void main() async {
+  // Con esto inicializamos nuestas notificaciones
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+  pushNotificationsProvider.initNotifications();
   runApp(MyApp());
 }
 
@@ -29,6 +51,15 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+
+    pushNotificationsProvider.onMMessageListener();
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -43,6 +74,8 @@ class _MyAppState extends State<MyApp> {
         'client/products/list' : (BuildContext contexto) => ClientProductsListPage(),
         'client/update' :  (BuildContext contexto) => ClientUpdatePage() ,
         'client/orders/create' : (BuildContext contexto) => ClientOrdersCreatePage(),
+        'client/payments/create' :  (BuildContext contexto) => ClientPaymentsCreatePage(),
+        'client/payments/installments' : (BuildContext contexto) => ClientPaymentsInstsallmentsPage(),
 
         'client/address/list' : (BuildContext contexto) => ClientAddressListPage(),
         'client/address/create' : (BuildContext contexto) => ClientAddressCreatePage(),

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:delivery_project/src/models/category.dart';
 import 'package:delivery_project/src/models/product.dart';
 import 'package:delivery_project/src/models/user.dart';
@@ -21,7 +23,8 @@ class ClientProductsListController {
   CategoriesProvider _categoriesProvider = new CategoriesProvider();
   ProductsProvider _productsProvider = new ProductsProvider();
 
-
+  Timer searchOnStoppedTyping;
+  String productName = '';
   Future init(BuildContext context, Function refresh) async{
     this.context = context;
     this.refresh =  refresh;
@@ -32,13 +35,32 @@ class ClientProductsListController {
     refresh();
   }
 
+  void onChangeText(String text){
+    Duration duration = Duration(milliseconds: 800);
+
+    if(searchOnStoppedTyping != null){
+      searchOnStoppedTyping.cancel();
+      refresh();
+    }
+
+    searchOnStoppedTyping = new Timer(duration, (){
+      productName = text;
+      refresh();
+      print('Texto completo $productName');
+    });
+  }
+
 
   void goToOrdersList(){
     Navigator.pushNamed(context, 'client/orders/list');
   }
 
-  Future<List<Product>> getProducts(String idCategory) async{
-    return await _productsProvider.getByCategory(idCategory);
+  Future<List<Product>> getProducts(String idCategory, String productName) async{
+    if (productName.isEmpty ){
+      return await _productsProvider.getByCategory(idCategory);
+    }else{
+      return await _productsProvider.getByCategoryAndProducName(idCategory, productName);
+    }
   }
 
 

@@ -102,6 +102,43 @@ class UsersProvider{
     }
   }
 
+  Future<ResponseApi> updateNotificationToken(String idUser , String token) async{
+    try{
+      Uri uri = Uri.http(_url , '$_api/updateNotificationToken');
+      String bodyParams = json.encode({
+        'id' :  idUser ,
+        'notification_token' :  token
+      });
+
+      // Indicamos que lo que estamos viendo son json
+      Map<String,String> headers = {
+        'Content-type' : 'application/json',
+        'Authorization' : sessionUser.sessionToken
+      };
+
+      final response = await http.put(uri,headers: headers, body: bodyParams);
+
+      // Validamos si esta autorizado
+      if (response.statusCode == 401){ // Unahtuorized
+        Fluttertoast.showToast(msg: 'Tu sesion ha expirado');
+        new SharedPref().logout(context , sessionUser.id);
+      }
+
+      // Almacenamos la respuesta de nuestra API
+      final data = json.decode(response.body);
+      // Lo convertimos a nuestro response Api
+      ResponseApi responseApi = ResponseApi.fromJson(data);
+      return responseApi;
+    }catch(e){
+      print('Error $e');
+      ResponseApi responseApi =  new ResponseApi
+        (message: 'Error en el front', error: e.toString(), success: false);
+      return responseApi;
+    }
+  }
+
+
+
 
   Future<ResponseApi> logout(String idUser) async{
     try{

@@ -48,6 +48,30 @@ class ProductsProvider{
     }
   }
 
+  Future<List<Product>> getByCategoryAndProducName(String idCategory, String productName) async{
+    try{
+      Uri uri = Uri.http(_url , '$_api/findByCategoryAndProductName/$idCategory/$productName');
+      // Indicamos que lo que estamos viendo son json
+      Map<String,String> headers = {
+        'Content-type' : 'application/json',
+        'Authorization' :  sessionUser.sessionToken
+      };
+      final response = await http.get(uri,headers: headers);
+      if (response.statusCode == 401){
+        Fluttertoast.showToast(msg: 'Sesion Expirada');
+        new SharedPref().logout(context , sessionUser.id);
+      }
+      // COnvertimos en el formato que lo necesitamos
+      // Convertimos nuestro json a una lista de categorias
+      final data = json.decode(response.body);
+      Product product = Product.fromJsonList(data);
+      return product.toList;
+    }catch(e){
+      print('Error $e');
+      return [];
+    }
+  }
+
 
   Future<Stream> create(Product product , List<File> image) async{
     try{
