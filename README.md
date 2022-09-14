@@ -1,16 +1,18 @@
 # delivery_project
 
-A new Flutter project.
+Esa es una aplicación realizada en Flutter que consume un servicio REST basado en Node.js y Express.
 
-## Getting Started
+Esta aplicacion incluye
+------------------
+1. Perfil del cliente (persona que busca algun producto en la lista de establecimientos en la aplicacion, comprar algunos productos, notificar al restaurante de su compra, y seguir el estatus de su entrega a traves de un trazado de ruta similar al de Uber)
+2. Perfil del restaurante (podra administrar los productos que se muestran en la aplicacion, asi como la informacion, fotos y costo de los mismos)
+3. Perfil del repartidor (en este perfil el repartidor podra tomar las ordenes asignadas por los establecimientos y llevarlas al cliente final con un sistema de trazado de ruta similar al de Uber)
 
-This project is a starting point for a Flutter application.
 
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
-
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+Cosas que aprenderemos
+------------------
+1. Consumir una REST API desde Flutter
+2. Creación de componentes y los diferentes estados en Flutter
+3. La integración de pasarelas de pago.
+4. Integracion de servicios de ubicacion y tracking en tiempo real
+5. Uso de Sockets
