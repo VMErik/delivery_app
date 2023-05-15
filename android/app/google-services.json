@@ -14,28 +14,28 @@
       },
       "oauth_client": [
         {
-          "client_id": "406650431609-t7eegedeotjgkfp5qr8ld86rvmcfldc3.apps.googleusercontent.com",
+          "client_id": "yourClientId",
           "client_type": 1,
           "android_info": {
             "package_name": "com.erikma.delivery_project",
-            "certificate_hash": "7eef084e888eb98c8aeb7a510348e30b3d8f1bb1"
+            "certificate_hash": "yourCertificateHash"
           }
         },
         {
-          "client_id": "406650431609-18r28on7ci5ijc3ka7jm7qnmurg451r3.apps.googleusercontent.com",
+          "client_id": "yourClientId",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyBuYIkzRBWexN1OWkjueqockKXWa4OQp4I"
+          "current_key": "yoourApiKey"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "406650431609-18r28on7ci5ijc3ka7jm7qnmurg451r3.apps.googleusercontent.com",
+              "client_id": "yourClientId",
               "client_type": 3
             }
           ]
